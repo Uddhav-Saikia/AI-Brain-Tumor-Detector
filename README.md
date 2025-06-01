@@ -54,13 +54,7 @@ The dataset was partitioned as follows:
 
 ## Neural Network Design
 
-Below is the architecture implemented:
-
-![Neural Network Architecture](convnet_architecture.jpg)
-
-### Architecture Explanation:
-
-Input images of shape (240, 240, 3) pass through:
+The network accepts input images of shape (240, 240, 3) and processes them through these layers:
 
 1. Zero Padding layer with pool size (2, 2)  
 2. Convolutional layer with 32 filters, each of size (7, 7), stride 1  
@@ -71,31 +65,26 @@ Input images of shape (240, 240, 3) pass through:
 7. Flatten layer to convert 3D features into 1D vector  
 8. Dense output layer with one neuron and sigmoid activation for binary classification  
 
-### Reasoning Behind This Architecture:
+### Why This Architecture?
 
-Initial attempts with transfer learning models like ResNet50 and VGG16 led to overfitting due to limited data and resource constraints (training was done on a 6th gen Intel i7 with 8GB RAM). Instead, a simpler CNN architecture was designed and trained from scratch, which yielded effective results with manageable computational demand.
+Initial experiments using transfer learning models like ResNet50 and VGG16 resulted in overfitting, primarily due to the limited dataset size and the hardware constraints (training was conducted on a 6th gen Intel i7 CPU with 8GB RAM). Given these factors, a simpler CNN architecture was designed and trained from scratch, achieving effective results with reasonable computational demands.
 
 ---
 
 ## Model Training
 
-The model was trained over 24 epochs. Loss and accuracy progressions during training are shown below:
-
-![Loss plot](Loss.PNG)  
-![Accuracy plot](Accuracy.PNG)  
-
-The highest validation accuracy was observed on epoch 23.
+The model was trained for 24 epochs. The training process showed steady improvement in both loss and accuracy, with the highest validation accuracy reached on the 23rd epoch.
 
 ---
 
 ## Evaluation and Results
 
-The best performing model achieved:  
+The best performing model achieved the following on the test set:
 
-- **Test Accuracy:** 88.7%  
-- **Test F1 Score:** 0.88  
+- **Accuracy:** 88.7%  
+- **F1 Score:** 0.88  
 
-Given the balanced nature of the dataset, these results demonstrate solid performance.
+Considering the relatively balanced nature of the dataset, these metrics demonstrate strong model performance.
 
 | Metric   | Validation Set | Test Set |
 | -------- | -------------- | -------- |
