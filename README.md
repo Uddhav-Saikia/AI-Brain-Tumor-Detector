@@ -1,115 +1,121 @@
-# Brain-Tumor-Detector
-Building a detection model using a convolutional neural network in Tensorflow & Keras.<br>
-Used a brain MRI images data founded on Kaggle. You can find it [here](https://www.kaggle.com/navoneel/brain-mri-images-for-brain-tumor-detection).<br>
+# Brain Tumor Detection Using CNN
 
-**About the data:**<br>
-The dataset contains 2 folders: yes and no which contains 253 Brain MRI Images. The folder yes contains 155 Brain MRI Images that are tumorous and the folder no contains 98 Brain MRI Images that are non-tumorous.
+This project involves developing a brain tumor detection model utilizing a convolutional neural network built with TensorFlow and Keras. The model is trained on brain MRI images sourced from Kaggle, available here: [Brain MRI Images Dataset](https://www.kaggle.com/navoneel/brain-mri-images-for-brain-tumor-detection).
 
-# Getting Started
+## Dataset Details
 
-**Note:** sometimes viewing IPython notebooks using GitHub viewer doesn't work as expected, so you can always view them using [nbviewer](https://nbviewer.jupyter.org/).
+The dataset consists of two main folders:  
+- **yes**: Contains 155 MRI scans showing presence of brain tumors  
+- **no**: Contains 98 MRI scans without tumors  
 
-## Data Augmentation:
+In total, there are 253 MRI images across both categories.
 
-**Why did I use data augmentation?**
+---
 
-Since this is a small dataset, There wasn't enough examples to train the neural network. Also, data augmentation was useful in taclking the data imbalance issue in the data.<br>
+## Getting Started
 
-Further explanations are found in the Data Augmentation notebook.
+> **Note:** GitHub’s default viewer might not properly render Jupyter notebooks. For a better experience, consider using [nbviewer](https://nbviewer.jupyter.org/) to open the notebooks.
 
-Before data augmentation, the dataset consisted of:<br>
-155 positive and 98 negative examples, resulting in 253 example images.
+---
 
-After data augmentation, now the dataset consists of:<br>
-1085 positive and 980 examples, resulting in 2065 example images.
+## Data Augmentation
 
-**Note:** these 2065 examples contains also the 253 original images. They are found in folder named 'augmented data'.
+**Why augment data?**  
+The dataset is relatively small and imbalanced, with fewer samples for non-tumorous cases. To address this and help the model generalize better, data augmentation techniques were applied.
 
-## Data Preprocessing
+- Original dataset: 155 tumor-positive and 98 tumor-negative images (253 total)  
+- After augmentation: 1085 tumor-positive and 980 tumor-negative images (2065 total), including the original images  
 
-For every image, the following preprocessing steps were applied:
+The augmented images are saved in the folder named `augmented data`.
 
-1. Crop the part of the image that contains only the brain (which is the most important part of the image).
-2. Resize the image to have a shape of (240, 240, 3)=(image_width, image_height, number of channels): because images in the dataset come in different sizes. So, all images should have the same shape to feed it as an input to the neural network.
-3. Apply normalization: to scale pixel values to the range 0-1.
+More details can be found in the "Data Augmentation" notebook.
 
-## Data Split:
+---
 
-The data was split in the following way:
-1. 70% of the data for training.
-2. 15% of the data for validation.
-3. 15% of the data for testing.
+## Preprocessing Steps
 
-# Neural Network Architecture
+Each MRI image undergoes the following preprocessing before being fed into the network:
 
-This is the architecture that I've built:
+1. Crop the image to focus only on the brain region, removing unnecessary background.  
+2. Resize all images to a uniform shape of (240, 240, 3) to ensure consistency.  
+3. Normalize pixel intensities to values between 0 and 1 to facilitate better training performance.
+
+---
+
+## Dataset Splitting
+
+The dataset was partitioned as follows:
+
+- 70% for training  
+- 15% for validation  
+- 15% for testing  
+
+---
+
+## Neural Network Design
+
+Below is the architecture implemented:
 
 ![Neural Network Architecture](convnet_architecture.jpg)
 
-**Understanding the architecture:**<br>
-Each input x (image) has a shape of (240, 240, 3) and is fed into the neural network. And, it goes through the following layers:<br>
+### Architecture Explanation:
 
-1. A Zero Padding layer with a pool size of (2, 2).
-2. A convolutional layer with 32 filters, with a filter size of (7, 7) and a stride equal to 1.
-3. A batch normalization layer to normalize pixel values to speed up computation.
-4. A ReLU activation layer.
-5. A Max Pooling layer with f=4 and s=4.
-6. A Max Pooling layer with f=4 and s=4, same as before.
-7. A flatten layer in order to flatten the 3-dimensional matrix into a one-dimensional vector.
-8. A Dense (output unit) fully connected layer with one neuron with a sigmoid activation (since this is a binary classification task).
+Input images of shape (240, 240, 3) pass through:
 
-**Why this architecture?**<br>
+1. Zero Padding layer with pool size (2, 2)  
+2. Convolutional layer with 32 filters, each of size (7, 7), stride 1  
+3. Batch Normalization layer to accelerate and stabilize training  
+4. ReLU activation layer  
+5. Max Pooling layer with filter size 4 and stride 4  
+6. Another Max Pooling layer with filter size 4 and stride 4  
+7. Flatten layer to convert 3D features into 1D vector  
+8. Dense output layer with one neuron and sigmoid activation for binary classification  
 
-Firstly, I applied transfer learning using a ResNet50 and vgg-16, but these models were too complex to the data size and were overfitting. Of course, you may get good results applying transfer learning with these models using data augmentation. But, I'm using training on a computer with 6th generation Intel i7 CPU and 8 GB memory. So, I had to take into consideration computational complexity and memory limitations.<br>
+### Reasoning Behind This Architecture:
 
-So why not try a simpler architecture and train it from scratch. And it worked :)
+Initial attempts with transfer learning models like ResNet50 and VGG16 led to overfitting due to limited data and resource constraints (training was done on a 6th gen Intel i7 with 8GB RAM). Instead, a simpler CNN architecture was designed and trained from scratch, which yielded effective results with manageable computational demand.
 
-# Training the model
-The model was trained for 24 epochs and these are the loss & accuracy plots:
+---
 
+## Model Training
 
-![Loss plot](Loss.PNG)
+The model was trained over 24 epochs. Loss and accuracy progressions during training are shown below:
 
+![Loss plot](Loss.PNG)  
+![Accuracy plot](Accuracy.PNG)  
 
-![Accuracy plot](Accuracy.PNG)
+The highest validation accuracy was observed on epoch 23.
 
-The best validation accuracy was achieved on the 23rd iteration.
+---
 
-# Results
+## Evaluation and Results
 
-Now, the best model (the one with the best validation accuracy) detects brain tumor with:<br>
+The best performing model achieved:  
 
-**88.7%** accuracy on the **test set**.<br>
-**0.88** f1 score on the **test set**.<br>
-These resutls are very good considering that the data is balanced.
+- **Test Accuracy:** 88.7%  
+- **Test F1 Score:** 0.88  
 
-**Performance table of the best model:**
+Given the balanced nature of the dataset, these results demonstrate solid performance.
 
-| <!-- -->  | Validation set | Test set |
-| --------- | -------------- | -------- |
-| Accuracy  | 91%            | 89%      |
-| F1 score  | 0.91           | 0.88     |
+| Metric   | Validation Set | Test Set |
+| -------- | -------------- | -------- |
+| Accuracy | 91%            | 89%      |
+| F1 Score | 0.91           | 0.88     |
 
+---
 
-# Final Notes
+## Additional Information
 
-What's in the files?
+What’s included in this repository?
 
-1. The code in the IPython notebooks.
-2. The weights for all the models. The best model is named as 'cnn-parameters-improvement-23-0.91.model'.
-3. The models are stored as *.model* files. They can be restored as follows:
+- Jupyter notebooks containing all code and experiments.  
+- Model weights saved as `.model` files, with the best model named `cnn-parameters-improvement-23-0.91.model`.  
+- Original dataset in the `yes` and `no` folders.  
+- Augmented dataset in the `augmented data` folder.
 
+You can load the best saved model using the following code snippet:
 
-```
+```python
 from tensorflow.keras.models import load_model
-best_model = load_model(filepath='models/cnn-parameters-improvement-23-0.91.model')
-```
 
-4. The original data in the folders named 'yes' and 'no'. And, the augmented data in the folder named 'augmented data'.
-
-
-Contributes are welcome!
-<br>Thank you!
-
-
-
+best_model = load_model('models/cnn-parameters-improvement-23-0.91.model')
